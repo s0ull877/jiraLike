@@ -16,7 +16,7 @@ class IAuthRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_user(self, user_id: str) -> User:
+    async def get_user(self, **fields) -> User:
         """
         Get a user by ID.
         """
