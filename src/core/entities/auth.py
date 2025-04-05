@@ -25,6 +25,7 @@ class User:
     timezone: str = field(default=str(pytz.timezone("Europe/Moscow")))
     image: str = field(default="")
 
+
 @dataclass
 class AccessToken:
     token: str
