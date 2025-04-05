@@ -18,7 +18,19 @@ class IAuthRepository(ABC):
     @abstractmethod
     async def get_user(self, **fields) -> User:
         """
-        Get a user by ID.
+        Get a user by fields.
+        
+        class User:
+            email: str
+            password: str
+            id: UUID | None 
+            name: str 
+            surname: str 
+            is_active: bool 
+            created_at: datetime 
+            updated_at: datetime 
+            timezone: str 
+            image: str 
         """
         raise NotImplementedError
 
