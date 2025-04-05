@@ -13,7 +13,6 @@ settings = get_settings()
 
 Base = declarative_base()
 
-
 class Database:
 
     def __init__(self, url: str, echo: bool = False):
