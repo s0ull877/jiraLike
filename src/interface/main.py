@@ -73,4 +73,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from infrastructure.broker.producer import broker_producer
+
+@app.on_event("startup")
+async def startup_event():
+    await broker_producer.open_connection()
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    await broker_producer.close_connection()
+    
+
 app.include_router(router, prefix="/api")

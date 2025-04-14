@@ -4,6 +4,10 @@ from aiokafka import AIOKafkaProducer
 
 from core.entities import EmailMessage
 
+from settings import get_settings
+
+settings = get_settings()
+
 @dataclass
 class BrokerProducer:
 
@@ -18,9 +22,14 @@ class BrokerProducer:
 
 
     async def send_email(self, email_message: EmailMessage) -> None:
+        
         encode_email_data = json.dumps(email_message.__dict__).encode()
-        await self.open_connection()
-        try:
-            await self.producer.send(topic=self.email_topic, value=encode_email_data)
-        finally:
-            await self.close_connection()
+        await self.producer.send(topic=self.email_topic, value=encode_email_data)
+
+
+
+
+broker_producer = BrokerProducer(
+    producer=AIOKafkaProducer(bootstrap_servers=settings.kafka_bootstrap_servers),
+    topic="email_notifications"
+)

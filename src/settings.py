@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     )
     refresh_token_expire_days: int = Field(os.environ.get("REFRESH_TOKEN_EXPIRE_DAYS"))
 
+    server_url: str = Field(os.environ.get("SERVER_URL"))
+    kafka_bootstrap_servers: str = Field(
+        os.environ.get("KAFKA_BOOTSTRAP_SERVERS")
+    )
+
     @property
     def database_url(self) -> str:
         return f"{self.db_engine}://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
