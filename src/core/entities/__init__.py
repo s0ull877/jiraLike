@@ -1,4 +1,5 @@
-from .auth import User, AccessToken, RefreshToken, Token, BannedRefreshToken
+from .auth import User, AccessToken, RefreshToken, Token, BannedRefreshToken, EmailVerification
+from .mail import EmailMessage
 
 
 __all__ = [
@@ -7,4 +8,6 @@ __all__ = [
     "RefreshToken",
     "Token",
     "BannedRefreshToken",
+    "EmailMessage",
+    "EmailVerification",
 ]

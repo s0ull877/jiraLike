@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 from core.entities import User
+from core.entities.auth import EmailVerification
 
 
 class IAuthRepository(ABC):
@@ -38,6 +39,20 @@ class IAuthRepository(ABC):
     async def update_user(self, user: User) -> User:
         """
         Update an existing user.
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    async def get_email_verification(self, code: UUID) -> EmailVerification | None:
+        """
+        Create a verification code for a user.
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    async def create_email_verification(self, email: str) -> EmailVerification | None:
+        """
+        Create a verification code for a user.
         """
         raise NotImplementedError
 

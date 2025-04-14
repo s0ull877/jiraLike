@@ -18,6 +18,14 @@ class User(Base, BaseModelMixin):
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     name: Mapped[str] = mapped_column(String(80), nullable=False)
     surname: Mapped[str] = mapped_column(String(80), nullable=False)
-    is_active: Mapped[bool] = mapped_column(default=True)
+    is_active: Mapped[bool] = mapped_column(default=False)
     timezone: Mapped[str] = mapped_column(default=str(pytz.timezone("Europe/Moscow")))
     image: Mapped[str] = mapped_column(nullable=True)
+
+
+
+class EmailVerification(Base, BaseModelMixin):
+    __tablename__ = "email_verifications"
+
+    code: Mapped[str] = mapped_column(nullable=False, unique=True)
+    email: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)

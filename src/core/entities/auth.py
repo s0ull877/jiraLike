@@ -42,6 +42,12 @@ class RefreshToken:
 
 
 @dataclass
+class EmailVerification:
+    code: UUID
+    email: str
+
+
+@dataclass
 class Token:
     """
     Token entity class.
