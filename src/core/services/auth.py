@@ -39,7 +39,7 @@ class AuthService:
         """
 
         if await self.auth_repository.get_user(email=user.email):
-            raise DuplicateEntryError("User already exists")
+            raise DuplicateEntryError("User with this email already exists")
         
         user.password = self.pwd_context.hash(user.password)
 
@@ -49,13 +49,22 @@ class AuthService:
     async def get_user(self, **fields) -> User:
         """
         Get a user by some fields.
+
+        class User:
+            id: UUID  
+            email: str
+            password: str
+            name: str 
+            surname: str 
+            is_active: bool 
+            created_at: datetime 
+            updated_at: datetime 
+            timezone: str 
+            image: str | None
         """
 
-        user = await self.auth_repository.get_user(**fields)
+        user: User | None = await self.auth_repository.get_user(**fields)
 
-        if not user:
-            raise NotFoundError("User not found")
-        
         return user
 
 
