@@ -1,9 +1,9 @@
 from uuid import UUID
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.exceptions import NotFoundError
-from core.entities import User, BannedRefreshToken
+from core.entities import User
 from core.interfaceRepositories import IAuthRepository, IBannedRefreshTokenRepository
 
 from infrastructure.models import (

@@ -41,5 +41,4 @@ class Database:
             await session.close()
 
 
-# database = Database(config.database_url)
 database: Database = Database(settings.database_url)

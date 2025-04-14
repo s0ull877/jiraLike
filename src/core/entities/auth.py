@@ -14,9 +14,9 @@ class User:
     User entity class.
     """
 
-    id: UUID | None = field(default=None)
     email: str
     password: str
+    id: UUID | None = field(default=None)
     name: str = field(default="")
     surname: str = field(default="")
     is_active: bool = field(default=True)
