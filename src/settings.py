@@ -34,6 +34,11 @@ class Settings(BaseSettings):
         os.environ.get("KAFKA_BOOTSTRAP_SERVERS")
     )
 
+    smtp_server: str = Field(os.environ.get("SMTP_SERVER"))
+    smtp_port: int = Field(os.environ.get("SMTP_PORT"))
+    smtp_username: str = Field(os.environ.get("SMTP_USERNAME"))
+    smtp_password: str = Field(os.environ.get("SMTP_PASSWORD"))
+
     @property
     def database_url(self) -> str:
         return f"{self.db_engine}://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
