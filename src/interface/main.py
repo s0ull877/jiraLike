@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import FastAPI, Request
 from fastapi.responses import ORJSONResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,16 +18,41 @@ from core.exceptions import (
 )
 from interface.routers import router
 
+from infrastructure.broker.producer import broker_producer
+from infrastructure.broker.consumer import broker_consumer
+
+
 settings = get_settings()
 logger = get_logger()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Инициализация настроек до запуска сервиса"""
-    logger.info(app)
+    # Инициализация Kafka Producer
+    
+    await broker_producer.start()
+    logger.info("Kafka Producer started.")
+
+    # Инициализация Kafka Consumer
+    await broker_consumer.start()
+    logger.info("Kafka Consumer started.")
+
+    consumer_task = asyncio.create_task(broker_consumer.consume_callback_message())
+
     yield
 
+    # Завершение работы Kafka Producer и Consumer
+    await broker_producer.stop()
+    logger.info("Kafka Producer stopped.")
+    await broker_consumer.stop()
+    logger.info("Kafka Consumer stopped.")
+    consumer_task.cancel()
+    try:
+        await consumer_task
+    except asyncio.CancelledError:
+        logger.info("Consumer task cancelled.")
+
+        
 
 app = FastAPI(
     title=settings.project_name,
@@ -73,15 +100,5 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from infrastructure.broker.producer import broker_producer
-
-@app.on_event("startup")
-async def startup_event():
-    await broker_producer.open_connection()
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    await broker_producer.close_connection()
-    
 
 app.include_router(router, prefix="/api")
