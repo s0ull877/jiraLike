@@ -1,11 +1,11 @@
 import jwt
 from dataclasses import dataclass
-from typing import List
 from uuid import UUID, uuid4
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 
 from core.entities import User, AccessToken, RefreshToken, Token
+from core.entities.auth import EmailVerification
 from core.interfaceRepositories import (
     IAuthRepository, 
     IBannedRefreshTokenRepository,
@@ -13,6 +13,7 @@ from core.interfaceRepositories import (
 from core.exceptions import (
     DuplicateEntryError,
     NotFoundError,
+    InvalidCredentialsError,
 )
 from settings import get_settings
 
@@ -94,6 +95,9 @@ class AuthService:
         if not self.pwd_context.verify(password, user.password):
             raise NotFoundError("Invalid email or password")
         
+        if not user.is_active:
+            raise InvalidCredentialsError("User email is not verified! Check email!")
+        
         access_token = self.create_access_token(
             {"sub": str(user.id)}
         )
@@ -124,7 +128,22 @@ class AuthService:
         )
 
         return banned_token
+    
+    async def create_verify_code(self, user: User) -> EmailVerification | None:
+        """
+        Create a verification code.
+        """
 
+        if await self.auth_repository.get_email_verification(email=user.email):
+            raise DuplicateEntryError("Verification with this email already exists")
+        
+        email_verification = EmailVerification(
+            code=uuid4(),
+            email=user.email
+        )
+        return await self.auth_repository.create_email_verification(emailverification=email_verification)
+
+    
 
     async def refresh(self, token: str) -> Token:
         """

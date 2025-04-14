@@ -3,12 +3,13 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.exceptions import NotFoundError
-from core.entities import User
+from core.entities import User, EmailVerification
 from core.interfaceRepositories import IAuthRepository, IBannedRefreshTokenRepository
 
 from infrastructure.models import (
     User as UserModel, 
     BannedRefreshToken as BannedRefreshTokenModel,
+    EmailVerification as EmailVerificationModel
 )
 
 
@@ -148,6 +149,53 @@ class AuthRepository(IAuthRepository):
 
         except Exception as e:
             print(f"Error updating user: {e}")
+            return None
+
+
+
+    async def get_email_verification(self, email: str) -> EmailVerification | None:
+
+        try:
+
+            stmt = select(EmailVerificationModel).filter_by(email=email)
+            result = await self.session.execute(stmt)
+            emailverification_model = result.scalars().first()
+
+            if not emailverification_model:
+                return None
+            
+            return EmailVerification(
+                code=emailverification_model.code,
+                email=emailverification_model.email,
+            )
+        
+        except Exception as e:
+            print(f"Error getting email verification: {e}")
+            return None
+
+
+
+    async def create_email_verification(self, emailverification: EmailVerification) -> EmailVerification | None:
+
+        try:
+
+            emailverification_model = EmailVerificationModel(
+                email=emailverification.email,
+                code=emailverification.code,
+            )
+
+            self.session.add(emailverification_model)
+
+            await self.session.commit()
+            await self.session.refresh(emailverification_model)
+
+            return EmailVerification(
+                code=emailverification_model.code,
+                email=emailverification_model.email,
+            )
+        
+        except Exception as e:
+            print(f"Error creating email verification: {e}")
             return None
 
 

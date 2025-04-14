@@ -43,14 +43,14 @@ class IAuthRepository(ABC):
         raise NotImplementedError
     
     @abstractmethod
-    async def get_email_verification(self, code: UUID) -> EmailVerification | None:
+    async def get_email_verification(self, email: str) -> EmailVerification | None:
         """
         Create a verification code for a user.
         """
         raise NotImplementedError
     
     @abstractmethod
-    async def create_email_verification(self, email: str) -> EmailVerification | None:
+    async def create_email_verification(self, email_verification: EmailVerification) -> EmailVerification | None:
         """
         Create a verification code for a user.
         """

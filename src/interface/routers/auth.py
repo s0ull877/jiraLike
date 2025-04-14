@@ -4,8 +4,8 @@ from fastapi import (
     Response, HTTPException, status
 )
 from core.entities.auth import Token, User
-from core.services import AuthService
-from interface.dependencies import get_auth_service
+from core.services import AuthService#, MailService
+from interface.dependencies import get_auth_service#, get_mail_service
 from interface.schemas.auth import UserLogin, UserCreate, UserResponse
 from settings import get_settings
 
@@ -17,6 +17,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 async def create_user(
     user: UserCreate,
     auth_service: AuthService = Depends(get_auth_service),
+    # mail_service: MailService = Depends(get_mail_service)
 ) -> UserResponse:
     """
     Create a new user.
@@ -24,6 +25,9 @@ async def create_user(
     user = User(**user.model_dump())
     
     user = await auth_service.create_user(user)
+    email_verification = await auth_service.create_verify_code(user)
+    # mail_service.send_verify_code(to=email_verification.email, code=email_verification.code)
+
     return UserResponse.model_validate(user)
 
 
