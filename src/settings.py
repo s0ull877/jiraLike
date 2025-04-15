@@ -38,6 +38,7 @@ class Settings(BaseSettings):
     smtp_port: str = Field(os.environ.get("SMTP_PORT"))
     smtp_username: str = Field(os.environ.get("SMTP_USERNAME"))
     smtp_password: str = Field(os.environ.get("SMTP_PASSWORD"))
+    mail_from: str = Field(os.environ.get("MAIL_FROM"))
 
     @property
     def database_url(self) -> str:

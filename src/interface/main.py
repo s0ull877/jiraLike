@@ -61,6 +61,8 @@ async def lifespan(app: FastAPI):
         await broker_producer.close_connection()
         logger.info("Kafka Producer stopped.")
 
+        raise
+
         
 
 app = FastAPI(

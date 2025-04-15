@@ -1,4 +1,5 @@
 import json
+import asyncio
 from dataclasses import dataclass
 from aiokafka import AIOKafkaConsumer
 
@@ -27,25 +28,18 @@ class BrokerConsumer:
 
     async def consume_callback_message(self) -> None:
         
-        await self.open_connection()
-        
-        try:
-        
-            async for message in self.consumer:
+        async for message in self.consumer:
+            
+            try:
+            
+                email_message = EmailMessage(**message.value)
+                logger.info(f"sending email...")
+                asyncio.create_task(SMTPClient.send_email(email_message))
                 
-                try:
-                
-                    data = json.loads(message.value.decode())
-                    email_message = EmailMessage(**data)
-                    SMTPClient.send_email(email_message)
-                
-                except Exception as e:
-                    logger.error(f"Error processing message: {e}")
+            
+            except Exception as e:
+                logger.error(f"Error processing message: {e}")
         
-        finally:
-        
-            await self.close_connection()
-
 
 
 
@@ -53,6 +47,7 @@ class BrokerConsumer:
 broker_consumer = BrokerConsumer(
     consumer=AIOKafkaConsumer(
         'email_notifications',
+        group_id="email_notification_group",
         bootstrap_servers=settings.kafka_bootstrap_servers,
         value_deserializer=lambda message: json.loads(message.decode("utf-8")),
     )
