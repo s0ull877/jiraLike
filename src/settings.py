@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     )
 
     smtp_server: str = Field(os.environ.get("SMTP_SERVER"))
-    smtp_port: int = Field(os.environ.get("SMTP_PORT"))
+    smtp_port: str = Field(os.environ.get("SMTP_PORT"))
     smtp_username: str = Field(os.environ.get("SMTP_USERNAME"))
     smtp_password: str = Field(os.environ.get("SMTP_PASSWORD"))
 

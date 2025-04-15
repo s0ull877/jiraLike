@@ -13,8 +13,8 @@ class AsyncSMTPMailer:
     def __init__(self):
 
         self.smtp = aiosmtplib.SMTP(
-            hostname=settings.SMTP_SERVER,
-            port=settings.SMTP_PORT,
+            hostname=settings.smtp_server,
+            port=int(settings.smtp_port),
             start_tls=True
         )
         self.connected = False
@@ -25,7 +25,7 @@ class AsyncSMTPMailer:
         if not self.connected:
 
             await self.smtp.connect()
-            await self.smtp.login(settings.SMTP_USERNAME, settings.SMTP_PASSWORD)
+            await self.smtp.login(settings.smtp_username, settings.smtp_password)
             self.connected = True
 
 
@@ -35,7 +35,7 @@ class AsyncSMTPMailer:
         
         msg = EmailMessageOrig()
         msg['Subject'] = email_message.subject
-        msg['From'] = settings.SMTP_USERNAME
+        msg['From'] = settings.smtp_username
         msg['To'] = email_message.email
         msg.set_content(email_message.body)
 
