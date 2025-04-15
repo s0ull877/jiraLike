@@ -1,3 +1,4 @@
+from uuid import UUID
 from sqlalchemy import String
 from sqlalchemy.orm import mapped_column, Mapped
 from infrastructure.models.base import BaseModelMixin
@@ -27,5 +28,5 @@ class User(Base, BaseModelMixin):
 class EmailVerification(Base, BaseModelMixin):
     __tablename__ = "email_verifications"
 
-    code: Mapped[str] = mapped_column(nullable=False, unique=True)
+    code: Mapped[UUID] = mapped_column(nullable=False, unique=True)
     email: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
