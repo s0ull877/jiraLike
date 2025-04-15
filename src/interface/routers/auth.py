@@ -26,7 +26,7 @@ async def create_user(
     
     user = await auth_service.create_user(user)
     email_verification = await auth_service.create_verify_code(user)
-    mail_service.send_verify_code(to=email_verification.email, code=email_verification.code)
+    await mail_service.send_verify_code(to=email_verification.email, code=email_verification.code)
 
     return UserResponse.model_validate(user)
 

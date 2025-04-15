@@ -25,7 +25,7 @@ class BrokerProducer:
     async def send_email(self, email_message: EmailMessage) -> None:
         
         encode_email_data = json.dumps(email_message.__dict__).encode()
-        await self.producer.send(topic=self.email_topic, value=encode_email_data)
+        await self.producer.send(topic=self.topic, value=encode_email_data)
 
 
 event_loop = asyncio.get_event_loop()
