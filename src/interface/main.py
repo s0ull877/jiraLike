@@ -28,29 +28,38 @@ logger = get_logger()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Инициализация Kafka Producer
-    
-    await broker_producer.start()
-    logger.info("Kafka Producer started.")
-
-    # Инициализация Kafka Consumer
-    await broker_consumer.start()
-    logger.info("Kafka Consumer started.")
-
-    consumer_task = asyncio.create_task(broker_consumer.consume_callback_message())
-
-    yield
-
-    # Завершение работы Kafka Producer и Consumer
-    await broker_producer.stop()
-    logger.info("Kafka Producer stopped.")
-    await broker_consumer.stop()
-    logger.info("Kafka Consumer stopped.")
-    consumer_task.cancel()
+    consumer_task = None
     try:
-        await consumer_task
-    except asyncio.CancelledError:
-        logger.info("Consumer task cancelled.")
+        # Инициализация Kafka Producer
+        await broker_producer.open_connection()
+        logger.info("Kafka Producer started.")
+
+        # Инициализация Kafka Consumer
+        await broker_consumer.open_connection()
+        logger.info("Kafka Consumer started.")
+
+        consumer_task = asyncio.create_task(broker_consumer.consume_callback_message())
+
+        yield  # Продолжаем выполнение FastAPI после успешного старта
+
+    except Exception as e:
+        logger.error(f"Ошибка при инициализации Kafka: {e}")
+        raise  # Повторно выбрасываем исключение, чтобы FastAPI завершился
+
+    finally:
+        # Гарантированное закрытие даже при ошибке
+        if consumer_task:
+            consumer_task.cancel()
+            try:
+                await consumer_task
+            except asyncio.CancelledError:
+                logger.info("Consumer task cancelled.")
+
+        await broker_consumer.close_connection()
+        logger.info("Kafka Consumer stopped.")
+
+        await broker_producer.close_connection()
+        logger.info("Kafka Producer stopped.")
 
         
 

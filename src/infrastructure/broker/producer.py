@@ -1,4 +1,5 @@
 import json
+import asyncio
 from dataclasses import dataclass
 from aiokafka import AIOKafkaProducer
 
@@ -27,9 +28,9 @@ class BrokerProducer:
         await self.producer.send(topic=self.email_topic, value=encode_email_data)
 
 
-
+event_loop = asyncio.get_event_loop()
 
 broker_producer = BrokerProducer(
-    producer=AIOKafkaProducer(bootstrap_servers=settings.kafka_bootstrap_servers),
+    producer=AIOKafkaProducer(bootstrap_servers=settings.kafka_bootstrap_servers, loop=event_loop),
     topic="email_notifications"
 )

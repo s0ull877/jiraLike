@@ -52,7 +52,7 @@ class BrokerConsumer:
 
 broker_consumer = BrokerConsumer(
     consumer=AIOKafkaConsumer(
-        ['email_notifications'],
+        'email_notifications',
         bootstrap_servers=settings.kafka_bootstrap_servers,
         value_deserializer=lambda message: json.loads(message.decode("utf-8")),
     )
