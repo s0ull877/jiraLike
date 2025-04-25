@@ -27,7 +27,7 @@ class MailService:
         email_message = EmailMessage(
             email=to, 
             subject=f"Verification code for {to}", 
-            body=f"Go to {settings.server_url}/verify/{code} for verifyiong your account"
+            body=f"Go to {settings.server_url}verify/{to}/{code} for verifying your account"
         )
 
 

@@ -129,6 +129,7 @@ class AuthService:
 
         return banned_token
     
+
     async def create_verify_code(self, user: User) -> EmailVerification | None:
         """
         Create a verification code.
@@ -142,8 +143,30 @@ class AuthService:
             email=user.email
         )
         return await self.auth_repository.create_email_verification(emailverification=email_verification)
-
     
+
+    async def activate_user(self, code: str, user: User):
+
+        email_verificatiion = await self.auth_repository.get_email_verification(email=user.email)
+
+        if email_verificatiion is None:
+            raise NotFoundError("Veriification not found")
+
+        if email_verificatiion.code != UUID(code):
+            raise NotFoundError("Verification not found")
+        
+        user.is_active = True
+        
+        updated_user = await self.auth_repository.update_user(user)
+
+        if updated_user is None:
+            raise Exception
+        
+        return user
+        
+
+        
+        
 
     async def refresh(self, token: str) -> Token:
         """

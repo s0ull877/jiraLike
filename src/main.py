@@ -11,3 +11,7 @@ if __name__ == "__main__":
         reload=True,
         use_colors=True,
     )
+
+
+
+# TODO Интаграционные тесты

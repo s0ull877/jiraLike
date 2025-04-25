@@ -61,6 +61,21 @@ async def login(
     return 
 
 
+@router.get("/verify/{email}/{code}", status_code=status.HTTP_200_OK)
+async def verify(
+    email: str,
+    code: str,
+    auth_service: AuthService = Depends(get_auth_service),
+):
+    """
+    Login a user and return a JWT token.
+    """
+    user = await auth_service.get_user(email=email)
+    await auth_service.activate_user(user=user, code=code)
+
+    return 
+
+
 @router.get("/logout", status_code=status.HTTP_200_OK)
 async def logout(
     request: Request,
