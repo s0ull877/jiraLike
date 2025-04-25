@@ -19,7 +19,7 @@ class User:
     id: UUID | None = field(default=None)
     name: str = field(default="")
     surname: str = field(default="")
-    is_active: bool = field(default=True)
+    is_active: bool = field(default=False)
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
     timezone: str = field(default=str(pytz.timezone("Europe/Moscow")))
