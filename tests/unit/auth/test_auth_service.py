@@ -3,7 +3,6 @@ import jwt
 import pytest
 from uuid import uuid4
 
-from src.core.services.auth import AuthService
 from src.settings import get_settings
 
 settings = get_settings()
@@ -11,6 +10,8 @@ settings = get_settings()
 pytestmark = pytest.mark.asyncio
 
 async def test_temp(mock_auth_service):
+    from src.core.services.auth import AuthService
+
     assert isinstance(mock_auth_service, AuthService)  
 
 

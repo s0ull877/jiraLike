@@ -1,4 +1,5 @@
 import pytest
+import asyncio
 
 pytest_plugins = [
     "tests.fixtures.auth.services",
@@ -7,5 +8,3 @@ pytest_plugins = [
     "src.core"
 ]
 
-
-# set PYTHONPATH=src;.
