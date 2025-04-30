@@ -31,4 +31,8 @@ async def init_models(event_loop):
 
 @pytest_asyncio.fixture(scope="function")
 async def get_db_session() -> AsyncSession:
-    yield AsyncSessionFactory()
+    session = AsyncSessionFactory()
+    try:
+        yield session
+    finally:
+        await session.close()
