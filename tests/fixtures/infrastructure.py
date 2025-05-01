@@ -18,10 +18,10 @@ AsyncSessionFactory = async_sessionmaker(
 )
 
 
-@pytest_asyncio.fixture(autouse=True, scope="function")
+@pytest_asyncio.fixture(autouse=True, scope="session")
 async def init_models(event_loop):
-    from src.infrastructure.postgres_db import Base
-    
+    from src.migrations.base import Base
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
@@ -30,9 +30,12 @@ async def init_models(event_loop):
 
 
 @pytest_asyncio.fixture(scope="function")
-async def get_db_session() -> AsyncSession:
+async def get_db_session() :
     session = AsyncSessionFactory()
     try:
         yield session
+    except Exception:
+        await session.rollback()
+        raise
     finally:
         await session.close()
